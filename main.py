@@ -24,7 +24,6 @@ def restricted(func):
     def wrapped(bot, update, *args, **kwargs):
         user_id = update.effective_user.id
         if user_id not in LIST_OF_ADMINS:
-            print("Unauthorized access denied for {}.".format(user_id))
             logging.warning('Unauthorized access denied for "%s"', user_id)
             return
         return func(bot, update, *args, **kwargs)
@@ -40,7 +39,12 @@ def start(bot, update):
 def dog_pict(bot, update):
     url = get_image_url()
     chat_id = update.message.chat_id
-    bot.send_photo(chat_id=chat_id, photo=url)
+    file_extension = re.search("([^.]*)$", url).group(1).lower()
+    if file_extension == 'gif':
+        bot.send_animation(chat_id=chat_id, animation=url)
+        print("gif!")
+    else:
+        bot.send_photo(chat_id=chat_id, photo=url)
 
 
 def echo(bot, update):
@@ -70,7 +74,7 @@ def get_url():
 
 
 def get_image_url():
-    allowed_extension = ['jpg', 'jpeg', 'png']
+    allowed_extension = ['jpg', 'jpeg', 'png', 'gif']
     file_extension = ''
     while file_extension not in allowed_extension:
         url = get_url()
@@ -95,9 +99,9 @@ dp.add_handler(CommandHandler('juanju', dog_pict))
 dp.add_handler(CommandHandler('echo',  echo))
 dp.add_handler(CommandHandler('stop',  stop))
 
-
 # on noncommand i.e message - echo the message on Telegram
 dp.add_handler(MessageHandler(Filters.text, echo))
+
 # log all errors
 dp.add_error_handler(error)
 updater.start_polling()
