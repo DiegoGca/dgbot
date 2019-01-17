@@ -8,6 +8,7 @@ import threading
 import requests
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from telegram import ChatAction
 from functools import wraps
 
 from credentials import LIST_OF_ADMINS, TOKEN
@@ -31,39 +32,6 @@ def restricted(func):
     return wrapped
 
 
-# /start
-def start(bot, update):
-    """Send a message when the command /start is issued."""
-    update.message.reply_text('Hi!')
-
-
-@send_action(ChatAction.TYPING)
-def dog_pict(bot, update):
-    """Send a doggo pict / gif."""
-    url = get_image_url()
-    chat_id = update.message.chat_id
-    file_extension = re.search("([^.]*)$", url).group(1).lower()
-    if file_extension == 'gif':
-        bot.send_animation(chat_id=chat_id, animation=url)
-    else:
-        bot.send_photo(chat_id=chat_id, photo=url)
-
-
-@send_action(ChatAction.UPLOAD_PHOTO)
-def echo(bot, update):
-    """Echo the user message."""
-    update.message.reply_text(update.message.text)
-    # shortcut to bot.send_message with sane defaults
-    # chat_id = update.message.chat_id
-    # bot.send_message(chat_id=chat_id, text=update.message.text)
-
-
-# https://github.com/python-telegram-bot/python-telegram-bot/wiki/Code-snippets#advanced-snippets
-@restricted
-def stop(bot, update):
-    threading.Thread(target=shutdown).start()
-
-
 def send_action(action):
     """Sends `action` while processing func command."""
 
@@ -76,6 +44,39 @@ def send_action(action):
         return command_func
 
     return decorator
+
+
+# /start
+def start(bot, update):
+    """Send a message when the command /start is issued."""
+    update.message.reply_text('Hi!')
+
+
+@send_action(ChatAction.UPLOAD_PHOTO)
+def dog_pict(bot, update):
+    """Send a doggo pict / gif."""
+    url = get_image_url()
+    chat_id = update.message.chat_id
+    file_extension = re.search("([^.]*)$", url).group(1).lower()
+    if file_extension == 'gif':
+        bot.send_animation(chat_id=chat_id, animation=url)
+    else:
+        bot.send_photo(chat_id=chat_id, photo=url)
+
+
+@send_action(ChatAction.TYPING)
+def echo(bot, update):
+    """Echo the user message."""
+    update.message.reply_text(update.message.text)
+    # shortcut to bot.send_message with sane defaults
+    # chat_id = update.message.chat_id
+    # bot.send_message(chat_id=chat_id, text=update.message.text)
+
+
+# https://github.com/python-telegram-bot/python-telegram-bot/wiki/Code-snippets#advanced-snippets
+@restricted
+def stop(bot, update):
+    threading.Thread(target=shutdown).start()
 
 
 # ----------------------
