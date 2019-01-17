@@ -15,9 +15,10 @@ from credentials import LIST_OF_ADMINS, TOKEN
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     filename='dgbot.log',
                     level=logging.INFO)
-logging.debug('Starting bot...')
+logging.info('Starting bot...')
 
 
+# TODO: add decorators external file
 # Restricted Decorator
 def restricted(func):
     @wraps(func)
@@ -36,20 +37,23 @@ def start(bot, update):
     update.message.reply_text('Hi!')
 
 
+@send_action(ChatAction.TYPING)
 def dog_pict(bot, update):
+    """Send a doggo pict / gif."""
     url = get_image_url()
     chat_id = update.message.chat_id
     file_extension = re.search("([^.]*)$", url).group(1).lower()
     if file_extension == 'gif':
         bot.send_animation(chat_id=chat_id, animation=url)
-        print("gif!")
     else:
         bot.send_photo(chat_id=chat_id, photo=url)
 
 
+@send_action(ChatAction.UPLOAD_PHOTO)
 def echo(bot, update):
     """Echo the user message."""
-    update.message.reply_text(update.message.text)   # TODO vs bot?
+    update.message.reply_text(update.message.text)
+    # shortcut to bot.send_message with sane defaults
     # chat_id = update.message.chat_id
     # bot.send_message(chat_id=chat_id, text=update.message.text)
 
@@ -58,6 +62,20 @@ def echo(bot, update):
 @restricted
 def stop(bot, update):
     threading.Thread(target=shutdown).start()
+
+
+def send_action(action):
+    """Sends `action` while processing func command."""
+
+    def decorator(func):
+        @wraps(func)
+        def command_func(*args, **kwargs):
+            bot, update = args
+            bot.send_chat_action(chat_id=update.effective_message.chat_id, action=action)
+            return func(bot, update, **kwargs)
+        return command_func
+
+    return decorator
 
 
 # ----------------------
