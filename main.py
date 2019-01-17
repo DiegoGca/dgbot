@@ -52,17 +52,6 @@ def bop(bot, update):
     bot.send_photo(chat_id=chat_id, photo=url)
 
 
-def bus(bot, update, args):
-    stop = args[0]  # TODO: placeholder stop n
-    url = 'http://salamancadetransportes.com/siri?city=salamanca&stop='+str(stop)
-    b_list = requests.get(url).json()
-
-    time = b_list[0]['time']
-    msg = "Llegará a %s" % time
-    chat_id = update.message.chat_id
-    bot.send_message(chat_id=chat_id, text=msg)
-
-
 def echo(bot, update):
     """Echo the user message."""
     update.message.reply_text(update.message.text)   # TODO vs bot?
@@ -91,7 +80,6 @@ updater = Updater(TOKEN)
 dp = updater.dispatcher
 dp.add_handler(CommandHandler('juanju', bop))
 dp.add_handler(CommandHandler('stop',  stop))
-dp.add_handler(CommandHandler('bus',  bus, pass_args=True))
 
 
 # on noncommand i.e message - echo the message on Telegram
