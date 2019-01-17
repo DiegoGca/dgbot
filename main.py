@@ -14,39 +14,30 @@ from credentials import LIST_OF_ADMINS, TOKEN
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     filename='dgbot.log',
-                    level=logging.DEBUG)
+                    level=logging.INFO)
 logging.debug('Starting bot...')
 
 
+# Restricted Decorator
 def restricted(func):
     @wraps(func)
     def wrapped(bot, update, *args, **kwargs):
         user_id = update.effective_user.id
         if user_id not in LIST_OF_ADMINS:
             print("Unauthorized access denied for {}.".format(user_id))
+            logging.warning('Unauthorized access denied for "%s"', user_id)
             return
         return func(bot, update, *args, **kwargs)
     return wrapped
 
-# TODO /start
+
+# /start
+def start(bot, update):
+    """Send a message when the command /start is issued."""
+    update.message.reply_text('Hi!')
 
 
-def get_url():
-    contents = requests.get('https://random.dog/woof.json').json()
-    url = contents['url']
-    return url
-
-
-def get_image_url():
-    allowed_extension = ['jpg', 'jpeg', 'png']
-    file_extension = ''
-    while file_extension not in allowed_extension:
-        url = get_url()
-        file_extension = re.search("([^.]*)$", url).group(1).lower()
-    return url
-
-
-def bop(bot, update):
+def dog_pict(bot, update):
     url = get_image_url()
     chat_id = update.message.chat_id
     bot.send_photo(chat_id=chat_id, photo=url)
@@ -65,25 +56,50 @@ def stop(bot, update):
     threading.Thread(target=shutdown).start()
 
 
+# ----------------------
 # otras funciones:
+def error(bot, update, error):
+    """Log Errors caused by Updates."""
+    logging.warning('Update "%s" caused error "%s"', update, error)
+
+
+def get_url():
+    contents = requests.get('https://random.dog/woof.json').json()
+    url = contents['url']
+    return url
+
+
+def get_image_url():
+    allowed_extension = ['jpg', 'jpeg', 'png']
+    file_extension = ''
+    while file_extension not in allowed_extension:
+        url = get_url()
+        file_extension = re.search("([^.]*)$", url).group(1).lower()
+    return url
+
 
 # This needs to be run on a new thread because calling 'updater.stop()' inside
-# handler (shutdown_cmd) causes a deadlock because it waits for itself to finish
+# handler (shutdown_cmd) causes a deadlock because it waits for itself to finis
 def shutdown():
     updater.stop()
     updater.is_idle = False
+# -------------------------
 
 
 # main
 # def main():
 updater = Updater(TOKEN)
 dp = updater.dispatcher
-dp.add_handler(CommandHandler('juanju', bop))
+dp.add_handler(CommandHandler("start", start))
+dp.add_handler(CommandHandler('juanju', dog_pict))
+dp.add_handler(CommandHandler('echo',  echo))
 dp.add_handler(CommandHandler('stop',  stop))
 
 
 # on noncommand i.e message - echo the message on Telegram
 dp.add_handler(MessageHandler(Filters.text, echo))
+# log all errors
+dp.add_error_handler(error)
 updater.start_polling()
 updater.idle()
 
