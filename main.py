@@ -7,7 +7,8 @@ import logging
 import threading
 import requests
 
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, \
+ RegexHandler
 from telegram import ChatAction
 from functools import wraps
 
@@ -15,7 +16,7 @@ from credentials import LIST_OF_ADMINS, TOKEN
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     filename='dgbot.log',
-                    level=logging.INFO)
+                    level=logging.DEBUG)
 logging.info('Starting bot...')
 
 
@@ -58,6 +59,7 @@ def dog_pict(bot, update):
     url = get_image_url()
     chat_id = update.message.chat_id
     file_extension = re.search("([^.]*)$", url).group(1).lower()
+    logging.info('DoggoImageUrl: %s', url)
     if file_extension == 'gif':
         bot.send_animation(chat_id=chat_id, animation=url)
     else:
@@ -71,6 +73,34 @@ def echo(bot, update):
     # shortcut to bot.send_message with sane defaults
     # chat_id = update.message.chat_id
     # bot.send_message(chat_id=chat_id, text=update.message.text)
+
+
+# @send_action(ChatAction.TYPING)
+def handl_text(bot, update):
+    """Process every text"""
+    #update.message.reply_text("Texto generico")
+
+
+def dg(bot, update):  # TODO fix this
+    chat_id = update.message.chat_id
+    bot.send_photo(chat_id=chat_id, photo='https://random.dog/59f02432-b972-4428-935b-4efb0af83456.jpg')
+    bot.send_animation(chat_id=chat_id, animation='https://random.dog/3254832e-ace1-414c-9d66-e4d968f2928f.gif')
+
+
+@send_action(ChatAction.TYPING)
+def acho(bot, update):
+    update.message.reply_text("ACHO!")
+
+
+@send_action(ChatAction.TYPING)
+def perdi(bot, update):
+    update.message.reply_text("¿El qué?")
+
+
+@send_action(ChatAction.TYPING)
+def ping(bot, update):
+    ms = 'Tienes una latencia de 27ms.\nSe han perdido todos los paquetes que hayan leido esto.'
+    update.message.reply_text(ms)
 
 
 # https://github.com/python-telegram-bot/python-telegram-bot/wiki/Code-snippets#advanced-snippets
@@ -114,12 +144,17 @@ def shutdown():
 updater = Updater(TOKEN)
 dp = updater.dispatcher
 dp.add_handler(CommandHandler("start", start))
-dp.add_handler(CommandHandler('juanju', dog_pict))
+dp.add_handler(CommandHandler(['jj', 'juanju'], dog_pict))
 dp.add_handler(CommandHandler('echo',  echo))
 dp.add_handler(CommandHandler('stop',  stop))
+dp.add_handler(CommandHandler('dg', dg))
+dp.add_handler(CommandHandler('ping', ping))
+dp.add_handler(RegexHandler('((d|D)+)(((a|A)+)((n|N)+)((i|I))+)', acho))
+dp.add_handler(RegexHandler('(p|P)erd(i|í)(.*)', perdi))
+
 
 # on noncommand i.e message - echo the message on Telegram
-dp.add_handler(MessageHandler(Filters.text, echo))
+dp.add_handler(MessageHandler(Filters.text, handl_text))
 
 # log all errors
 dp.add_error_handler(error)
