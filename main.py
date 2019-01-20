@@ -68,7 +68,7 @@ def dog_pict(bot, update):
 
 @send_action(ChatAction.TYPING)
 def echo(bot, update):
-    """Echo the user message."""
+    """Echo the user message."""  # TODO without /echo
     update.message.reply_text(update.message.text)
     # shortcut to bot.send_message with sane defaults
     # chat_id = update.message.chat_id
@@ -95,6 +95,11 @@ def acho(bot, update):
 @send_action(ChatAction.TYPING)
 def perdi(bot, update):
     update.message.reply_text("¿El qué?")
+
+
+@send_action(ChatAction.TYPING)
+def ddr1(bot, update):
+    update.message.reply_text("¿Alguien tiene DDR1?")
 
 
 @send_action(ChatAction.TYPING)
@@ -150,7 +155,9 @@ dp.add_handler(CommandHandler('stop',  stop))
 dp.add_handler(CommandHandler('dg', dg))
 dp.add_handler(CommandHandler('ping', ping))
 dp.add_handler(RegexHandler('((d|D)+)(((a|A)+)((n|N)+)((i|I))+)', acho))
-dp.add_handler(RegexHandler('(p|P)erd(i|í)(.*)', perdi))
+dp.add_handler(RegexHandler('(.*)(p|P)erd(i|í)(.*)', perdi))
+dp.add_handler(RegexHandler('(.*)(d|D)(d|D)(r|R)[0-9](.*)', ddr1))
+
 
 
 # on noncommand i.e message - echo the message on Telegram
