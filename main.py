@@ -7,12 +7,17 @@ import logging
 import threading
 import requests
 
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, \
- RegexHandler
+from telegram.ext import Updater, Filters
+from telegram.ext import CommandHandler, MessageHandler
+from telegram.ext import RegexHandler, CallbackQueryHandler
+from telegram import ReplyKeyboardRemove
 from telegram import ChatAction
 from functools import wraps
 
 from credentials import LIST_OF_ADMINS, TOKEN
+
+import telegramcalendar
+
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     filename='dgbot.log',
@@ -78,7 +83,7 @@ def echo(bot, update):
 # @send_action(ChatAction.TYPING)
 def handl_text(bot, update):
     """Process every text"""
-    #update.message.reply_text("Texto generico")
+    # update.message.reply_text("Texto generico")
 
 
 def dg(bot, update):  # TODO fix this
@@ -106,6 +111,19 @@ def ddr1(bot, update):
 def ping(bot, update):
     ms = 'Tienes una latencia de 27ms.\nSe han perdido todos los paquetes que hayan leido esto.'
     update.message.reply_text(ms)
+
+
+def calendar_handler(bot,update):
+    update.message.reply_text("Please select a date: ",
+    reply_markup=telegramcalendar.create_calendar())
+
+
+def inline_handler(bot,update):
+    selected,date = telegramcalendar.process_calendar_selection(bot, update)
+    if selected:
+        bot.send_message(chat_id=update.callback_query.from_user.id,
+                        text="You selected %s" % (date.strftime("%d/%m/%Y")),
+                        reply_markup=ReplyKeyboardRemove())
 
 
 # https://github.com/python-telegram-bot/python-telegram-bot/wiki/Code-snippets#advanced-snippets
@@ -148,16 +166,20 @@ def shutdown():
 # def main():
 updater = Updater(TOKEN)
 dp = updater.dispatcher
+
 dp.add_handler(CommandHandler("start", start))
-dp.add_handler(CommandHandler(['jj', 'juanju'], dog_pict))
+dp.add_handler(CommandHandler("calendar",calendar_handler))
+dp.add_handler(CallbackQueryHandler(inline_handler))
+
+dp.add_handler(CommandHandler(['dog', 'jj', 'juanju'], dog_pict))
 dp.add_handler(CommandHandler('echo',  echo))
 dp.add_handler(CommandHandler('stop',  stop))
 dp.add_handler(CommandHandler('dg', dg))
 dp.add_handler(CommandHandler('ping', ping))
+
 dp.add_handler(RegexHandler('((d|D)+)(((a|A)+)((n|N)+)((i|I))+)', acho))
 dp.add_handler(RegexHandler('(.*)(p|P)erd(i|í)(.*)', perdi))
 dp.add_handler(RegexHandler('(.*)(d|D)(d|D)(r|R)[0-9](.*)', ddr1))
-
 
 
 # on noncommand i.e message - echo the message on Telegram
