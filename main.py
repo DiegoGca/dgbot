@@ -6,6 +6,7 @@ import re
 import logging
 import threading
 import requests
+import datetime
 
 from telegram.ext import Updater, Filters
 from telegram.ext import CommandHandler, MessageHandler
@@ -70,6 +71,12 @@ def dog_pict(bot, update):
     else:
         bot.send_photo(chat_id=chat_id, photo=url)
 
+    today = datetime.date.today()  # no timezone!
+    if chat_id == '211589207' or (today.month == 1 and today.day == 22):
+        msg = "Feliz Cumpleaños GGGGGKIKO!!\n aunque 15 dias tarde :/"
+        logging.info("KIKO")
+        update.message.reply_text(msg)
+
 
 @send_action(ChatAction.TYPING)
 def echo(bot, update):
@@ -113,18 +120,21 @@ def ping(bot, update):
     update.message.reply_text(ms)
 
 
-def calendar_handler(bot,update):
+def calendar_handler(bot, update):
     update.message.reply_text("Please select a date: ",
-    reply_markup=telegramcalendar.create_calendar())
+    reply_markup = telegramcalendar.create_calendar())
 
 
-def inline_handler(bot,update):
-    selected,date = telegramcalendar.process_calendar_selection(bot, update)
+def inline_handler(bot, update):
+    selected, date = telegramcalendar.process_calendar_selection(bot, update)
     if selected:
         bot.send_message(chat_id=update.callback_query.from_user.id,
-                        text="You selected %s" % (date.strftime("%d/%m/%Y")),
-                        reply_markup=ReplyKeyboardRemove())
+                        text = "You selected %s"%(date.strftime("%d/%m/%Y")),
+                        reply_markup = ReplyKeyboardRemove())
 
+
+# ----------------------
+# otras funciones:
 
 # https://github.com/python-telegram-bot/python-telegram-bot/wiki/Code-snippets#advanced-snippets
 @restricted
@@ -132,8 +142,6 @@ def stop(bot, update):
     threading.Thread(target=shutdown).start()
 
 
-# ----------------------
-# otras funciones:
 def error(bot, update, error):
     """Log Errors caused by Updates."""
     logging.warning('Update "%s" caused error "%s"', update, error)
@@ -168,10 +176,10 @@ updater = Updater(TOKEN)
 dp = updater.dispatcher
 
 dp.add_handler(CommandHandler("start", start))
-dp.add_handler(CommandHandler("calendar",calendar_handler))
+dp.add_handler(CommandHandler("calendar", calendar_handler))
 dp.add_handler(CallbackQueryHandler(inline_handler))
 
-dp.add_handler(CommandHandler(['dog', 'jj', 'juanju'], dog_pict))
+dp.add_handler(CommandHandler(['dog', 'enrique', 'jj', 'juanju'], dog_pict))
 dp.add_handler(CommandHandler('echo',  echo))
 dp.add_handler(CommandHandler('stop',  stop))
 dp.add_handler(CommandHandler('dg', dg))
