@@ -6,7 +6,7 @@ import re
 import logging
 import threading
 import requests
-import datetime
+# import datetime
 
 from telegram.ext import Updater, Filters
 from telegram.ext import CommandHandler, MessageHandler
@@ -70,12 +70,6 @@ def dog_pict(bot, update):
         bot.send_animation(chat_id=chat_id, animation=url)
     else:
         bot.send_photo(chat_id=chat_id, photo=url)
-
-    today = datetime.date.today()  # no timezone!
-    if chat_id == '211589207' or (today.month == 1 and today.day == 22):
-        msg = "Feliz Cumpleaños GGGGGKIKO!!\n aunque 15 dias tarde :/"
-        logging.info("KIKO")
-        update.message.reply_text(msg)
 
 
 @send_action(ChatAction.TYPING)
