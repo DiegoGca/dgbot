@@ -18,12 +18,13 @@ from functools import wraps
 from credentials import LIST_OF_ADMINS, TOKEN
 
 import telegramcalendar
+import aulas
 
 updater = None
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     filename='dgbot.log',
-                    level=logging.INFO)
+                    level=logging.DEBUG)
 logging.info('Starting bot...')
 
 
@@ -124,6 +125,19 @@ def ping(bot, update):
     update.message.reply_text(ms)
 
 
+def aula(bot, update):
+    # url = "http://avellano.usal.es/gesinf/recursos/reservas.jsp?RECURSO=Laboratorio%20HP"
+    url = "http://avellano.usal.es/gesinf/recursos/reservas.jsp?RECURSO=Aula%20Sun"
+    # url = "http://avellano.usal.es/gesinf/recursos/reservas.jsp?RECURSO=Laboratorio%20de%20InformAtica"
+    horario = aulas.print_dia(url, 2, 2)
+    msg = comopse_schdl(horario)
+    chat_id = update.message.chat_id
+    bot.send_message(chat_id=chat_id,
+                    text=msg,
+                    parse_mode='HTML')
+
+
+
 def calendar_handler(bot, update):
     update.message.reply_text("Please select a date: ",
     reply_markup=telegramcalendar.create_calendar())
@@ -139,6 +153,12 @@ def inline_handler(bot, update):
 
 # ----------------------
 # otras funciones:
+# TODO: refactor, mover a aulas.
+def comopse_schdl(txt):
+    final = []
+    for line in txt:
+        final.append('<b>'+line+'</b>')
+    return final
 
 
 @restricted
@@ -196,6 +216,7 @@ def main():
     dp.add_handler(CommandHandler('stop',  stop))
     dp.add_handler(CommandHandler('dg8', dg))
     dp.add_handler(CommandHandler('ping', ping))
+    dp.add_handler(CommandHandler('aula', aula))
 
     dp.add_handler(RegexHandler('((d|D)+)(((a|A)+)((n|N)+)((i|I))+)', acho))
     dp.add_handler(RegexHandler('(.*)(p|P)erd(i|í)(.*)', perdi))
