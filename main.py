@@ -19,16 +19,21 @@ from credentials import LIST_OF_ADMINS, TOKEN
 
 import telegramcalendar
 
+updater = None
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     filename='dgbot.log',
-                    level=logging.DEBUG)
+                    level=logging.INFO)
 logging.info('Starting bot...')
 
 
 # TODO: add decorators external file
 # Restricted Decorator
 def restricted(func):
+    """Restrict the access of a handler to only
+    the user_ids specified in LIST_OF_ADMINS
+    https://github.com/python-telegram-bot/python-telegram-bot/wiki/Code-snippets#advanced-snippets
+    """
     @wraps(func)
     def wrapped(bot, update, *args, **kwargs):
         user_id = update.effective_user.id
@@ -54,7 +59,7 @@ def send_action(action):
 
 
 # /start
-def start(bot, update):
+def start(bot, update):  # TODO add more info
     """Send a message when the command /start is issued."""
     update.message.reply_text('Hi!')
 
@@ -88,6 +93,9 @@ def handl_text(bot, update):
 
 
 def dg(bot, update):  # TODO fix this
+    """ BUG: sending these imgs crashes the bot
+        TODO: fix
+    """
     chat_id = update.message.chat_id
     bot.send_photo(chat_id=chat_id, photo='https://random.dog/59f02432-b972-4428-935b-4efb0af83456.jpg')
     bot.send_animation(chat_id=chat_id, animation='https://random.dog/3254832e-ace1-414c-9d66-e4d968f2928f.gif')
@@ -130,9 +138,15 @@ def inline_handler(bot, update):
 # ----------------------
 # otras funciones:
 
-# https://github.com/python-telegram-bot/python-telegram-bot/wiki/Code-snippets#advanced-snippets
+
 @restricted
 def stop(bot, update):
+    """ /stop : Stop the bot and log, as suggested in:
+    https://github.com/python-telegram-bot/python-telegram-bot/issues/801#issuecomment-323778248
+     """
+    ms = 'Se va a detener el bot'
+    update.message.reply_text(ms)
+    logging.info('Se ha recibido /stop. ' + ms)
     threading.Thread(target=shutdown).start()
 
 
@@ -161,36 +175,38 @@ def get_image_url():
 def shutdown():
     updater.stop()
     updater.is_idle = False
+    logging.info('Bot Detenido')
 # -------------------------
 
 
 # main
-# def main():
-updater = Updater(TOKEN)
-dp = updater.dispatcher
+def main():
+    global updater
+    updater = Updater(TOKEN)
+    dp = updater.dispatcher
 
-dp.add_handler(CommandHandler("start", start))
-dp.add_handler(CommandHandler("calendar", calendar_handler))
-dp.add_handler(CallbackQueryHandler(inline_handler))
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("calendar", calendar_handler))
+    dp.add_handler(CallbackQueryHandler(inline_handler))
 
-dp.add_handler(CommandHandler(['dog', 'enrique', 'jj', 'juanju'], dog_pict))
-dp.add_handler(CommandHandler('echo',  echo))
-dp.add_handler(CommandHandler('stop',  stop))
-dp.add_handler(CommandHandler('dg', dg))
-dp.add_handler(CommandHandler('ping', ping))
+    dp.add_handler(CommandHandler(['dog', 'enrique', 'jj', 'juanju'], dog_pict))
+    dp.add_handler(CommandHandler('echo',  echo))
+    dp.add_handler(CommandHandler('stop',  stop))
+    dp.add_handler(CommandHandler('dg8', dg))
+    dp.add_handler(CommandHandler('ping', ping))
 
-dp.add_handler(RegexHandler('((d|D)+)(((a|A)+)((n|N)+)((i|I))+)', acho))
-dp.add_handler(RegexHandler('(.*)(p|P)erd(i|í)(.*)', perdi))
-dp.add_handler(RegexHandler('(.*)(d|D)(d|D)(r|R)[0-9](.*)', ddr1))
+    dp.add_handler(RegexHandler('((d|D)+)(((a|A)+)((n|N)+)((i|I))+)', acho))
+    dp.add_handler(RegexHandler('(.*)(p|P)erd(i|í)(.*)', perdi))  # TODO perdedor
+    dp.add_handler(RegexHandler('(.*)(d|D)(d|D)(r|R)[0-9](.*)', ddr1))
+
+    # on noncommand i.e message - echo the message on Telegram
+    dp.add_handler(MessageHandler(Filters.text, handl_text))
+
+    # log all errors
+    dp.add_error_handler(error)
+    updater.start_polling()
+    updater.idle()
 
 
-# on noncommand i.e message - echo the message on Telegram
-dp.add_handler(MessageHandler(Filters.text, handl_text))
-
-# log all errors
-dp.add_error_handler(error)
-updater.start_polling()
-updater.idle()
-
-# if __name__ == '__main__':
-#     main()
+if __name__ == '__main__':
+    main()
