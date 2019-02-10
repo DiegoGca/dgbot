@@ -146,6 +146,8 @@ def calendar_handler(bot, update):
 def inline_handler(bot, update):
     selected, date = telegramcalendar.process_calendar_selection(bot, update)
     if selected:
+        aulas.get_labs_sch(date)
+        # TODO: llamar a aulas con la fecha
         bot.send_message(chat_id=update.callback_query.from_user.id,
                         text="You selected %s" % (date.strftime("%d/%m/%Y")),
                         reply_markup=ReplyKeyboardRemove())
