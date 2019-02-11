@@ -42,7 +42,7 @@ def create_calendar(year=None, month=None):
     row.append(InlineKeyboardButton(calendar.month_name[month]+" "+str(year),callback_data=data_ignore))
     keyboard.append(row)
     # Second row - Week Days
-    row=[]
+    row = []
     for day in ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]:
         row.append(InlineKeyboardButton(day, callback_data=data_ignore))
     keyboard.append(row)
@@ -57,7 +57,7 @@ def create_calendar(year=None, month=None):
                 row.append(InlineKeyboardButton(str(day),callback_data=create_callback_data("DAY",year,month,day)))
         keyboard.append(row)
     # Last row - Buttons
-    row=[]
+    row = []
     row.append(InlineKeyboardButton("<",callback_data=create_callback_data("PREV-MONTH",year,month,day)))
     row.append(InlineKeyboardButton(" ",callback_data=data_ignore))
     row.append(InlineKeyboardButton(">",callback_data=create_callback_data("NEXT-MONTH",year,month,day)))

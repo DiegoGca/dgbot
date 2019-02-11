@@ -130,11 +130,14 @@ def aula(bot, update):
     url = "http://avellano.usal.es/gesinf/recursos/reservas.jsp?RECURSO=Aula%20Sun"
     # url = "http://avellano.usal.es/gesinf/recursos/reservas.jsp?RECURSO=Laboratorio%20de%20InformAtica"
     horario = aulas.print_dia(url, 2, 2)
-    msg = comopse_schdl(horario)
+    # msg = comopse_schdl(horario)
+    msg = "TODO fix!!!"
     chat_id = update.message.chat_id
     bot.send_message(chat_id=chat_id,
                     text=msg,
                     parse_mode='HTML')
+
+    # TODO: /libres: muestra las aulas LIBRES de un dia, ordenada por más horas
 
 
 
@@ -146,17 +149,17 @@ def calendar_handler(bot, update):
 def inline_handler(bot, update):
     selected, date = telegramcalendar.process_calendar_selection(bot, update)
     if selected:
-        aulas.get_labs_sch(date)
-        # TODO: llamar a aulas con la fecha
+        msg = aulas.get_labs_sch(date)
         bot.send_message(chat_id=update.callback_query.from_user.id,
-                        text="You selected %s" % (date.strftime("%d/%m/%Y")),
+                        # text="You selected %s" % (date.strftime("%d/%m/%Y")),
+                        text=msg,
                         reply_markup=ReplyKeyboardRemove())
 
 
 # ----------------------
 # otras funciones:
 # TODO: refactor, mover a aulas.
-def comopse_schdl(txt):
+def prettify_schdl(txt):
     final = []
     for line in txt:
         final.append('<b>'+line+'</b>')
