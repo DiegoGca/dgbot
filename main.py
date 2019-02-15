@@ -15,7 +15,7 @@ from telegram import ReplyKeyboardRemove
 from telegram import ChatAction
 from functools import wraps
 
-from credentials import LIST_OF_ADMINS, TOKEN
+# from credentials import LIST_OF_ADMINS, TOKEN
 
 import telegramcalendar
 import aulas
@@ -80,7 +80,7 @@ def dog_pict(bot, update):
 
 @send_action(ChatAction.TYPING)
 def echo(bot, update):
-    """Echo the user message."""  # TODO without /echo
+    """Echo the user message."""
     update.message.reply_text(update.message.text)
     # shortcut to bot.send_message with sane defaults
     # chat_id = update.message.chat_id
