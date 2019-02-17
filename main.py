@@ -15,7 +15,7 @@ from telegram import ReplyKeyboardRemove
 from telegram import ChatAction
 from functools import wraps
 
-# from credentials import LIST_OF_ADMINS, TOKEN
+from credentials import LIST_OF_ADMINS, TOKEN
 
 import telegramcalendar
 import aulas
@@ -131,6 +131,13 @@ def aula(bot, update):
     print("aula")
 
 
+@send_action(ChatAction.UPLOAD_PHOTO)
+def horario(bot, update):
+    """ Send timetable pic """
+    bot.send_photo(chat_id=update.message.chat_id,
+    photo=open('assets/img_horario4.png', 'rb'))
+
+
 def calendar_handler(bot, update):
     update.message.reply_text("Please select a date: ",
     reply_markup=telegramcalendar.create_calendar())
@@ -205,6 +212,7 @@ def main():
     dp.add_handler(CommandHandler('dg8', dg))
     dp.add_handler(CommandHandler('ping', ping))
     dp.add_handler(CommandHandler('aula', aula))
+    dp.add_handler(CommandHandler('horario', horario))
 
     dp.add_handler(RegexHandler('((d|D)+)(((a|A)+)((n|N)+)((i|I))+)', acho))
     dp.add_handler(RegexHandler('(.*)(p|P)erd(i|í)(.*)', perdi))
