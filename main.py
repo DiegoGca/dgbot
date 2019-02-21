@@ -154,6 +154,14 @@ def horario(bot, update):
     # TODO añadir horario por persona
 
 
+@send_action(ChatAction.UPLOAD_PHOTO)
+def mihorario(bot, update):
+    """ Send timetable pic """
+    bot.send_photo(chat_id=update.message.chat_id,
+    photo=open('assets/horario_dg.png', 'rb'))
+    # TODO añadir horario por persona
+
+
 def calendar_handler(bot, update):
     update.message.reply_text("Please select a date: ",
     reply_markup=telegramcalendar.create_calendar())
@@ -169,7 +177,7 @@ def inline_handler(bot, update):
                         parse_mode='HTML',
                         reply_markup=ReplyKeyboardRemove())
 
-
+###
 
 
 @restricted
@@ -229,12 +237,14 @@ def main():
 
     dp.add_handler(CommandHandler(['dog', 'jj', 'juanju'], dog_pict))
     dp.add_handler(CommandHandler(['cat', 'gatoperro'], cat_pict))
-    dp.add_handler(CommandHandler('echo',  echo))
-    dp.add_handler(CommandHandler('stop',  stop))
-    dp.add_handler(CommandHandler('dg8', dg))
+    dp.add_handler(CommandHandler('echo', echo))
+    dp.add_handler(CommandHandler('stop', stop))
+    dp.add_handler(CommandHandler('dg8',  dg))
     dp.add_handler(CommandHandler('ping', ping))
     dp.add_handler(CommandHandler('aula', aula))
     dp.add_handler(CommandHandler('horario', horario))
+    dp.add_handler(CommandHandler('mihorario', mihorario))
+
 
     dp.add_handler(RegexHandler('((d|D)+)(((a|A)+)((n|N)+)((i|I))+)', acho))
     dp.add_handler(RegexHandler('(.*)(p|P)erd(i|í)(.*)', perdi))
