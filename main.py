@@ -58,6 +58,8 @@ def send_action(action):
 
     return decorator
 
+####################################
+
 
 # /start
 def start(bot, update):  # TODO add more info
@@ -68,10 +70,23 @@ def start(bot, update):  # TODO add more info
 @send_action(ChatAction.UPLOAD_PHOTO)
 def dog_pict(bot, update):
     """Send a doggo pict / gif."""
-    url = get_image_url()
+    url = get_dog_url()
     chat_id = update.message.chat_id
     file_extension = re.search("([^.]*)$", url).group(1).lower()
     logging.info('DoggoImageUrl: %s', url)
+    if file_extension == 'gif':
+        bot.send_animation(chat_id=chat_id, animation=url)
+    else:
+        bot.send_photo(chat_id=chat_id, photo=url)
+
+
+@send_action(ChatAction.UPLOAD_PHOTO)
+def cat_pict(bot, update):
+    """Send cat pict """
+    url = get_cat_url()
+    chat_id = update.message.chat_id
+    file_extension = re.search("([^.]*)$", url).group(1).lower()
+    logging.info('CatImage url: %s', url)
     if file_extension == 'gif':
         bot.send_animation(chat_id=chat_id, animation=url)
     else:
@@ -136,6 +151,7 @@ def horario(bot, update):
     """ Send timetable pic """
     bot.send_photo(chat_id=update.message.chat_id,
     photo=open('assets/img_horario4.png', 'rb'))
+    # TODO añadir horario por persona
 
 
 def calendar_handler(bot, update):
@@ -178,12 +194,17 @@ def get_url():
     return url
 
 
-def get_image_url():
+def get_dog_url():
     allowed_extension = ['jpg', 'jpeg', 'png', 'gif']
     file_extension = ''
     while file_extension not in allowed_extension:
         url = get_url()
         file_extension = re.search("([^.]*)$", url).group(1).lower()
+    return url
+
+def get_cat_url():
+    contents = requests.get('https://api.thecatapi.com/v1/images/search').json()
+    url = contents[0]['url']
     return url
 
 
@@ -207,6 +228,7 @@ def main():
     dp.add_handler(CallbackQueryHandler(inline_handler))
 
     dp.add_handler(CommandHandler(['dog', 'jj', 'juanju'], dog_pict))
+    dp.add_handler(CommandHandler(['cat', 'gatoperro'], cat_pict))
     dp.add_handler(CommandHandler('echo',  echo))
     dp.add_handler(CommandHandler('stop',  stop))
     dp.add_handler(CommandHandler('dg8', dg))
