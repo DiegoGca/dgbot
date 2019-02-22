@@ -210,6 +210,7 @@ def get_dog_url():
         file_extension = re.search("([^.]*)$", url).group(1).lower()
     return url
 
+
 def get_cat_url():
     contents = requests.get('https://api.thecatapi.com/v1/images/search').json()
     url = contents[0]['url']
@@ -245,7 +246,6 @@ def main():
     dp.add_handler(CommandHandler('horario', horario))
     dp.add_handler(CommandHandler('mihorario', mihorario))
 
-
     dp.add_handler(RegexHandler('((d|D)+)(((a|A)+)((n|N)+)((i|I))+)', acho))
     dp.add_handler(RegexHandler('(.*)(p|P)erd(i|í)(.*)', perdi))
     dp.add_handler(RegexHandler('(.*)(d|D)(d|D)(r|R)[0-9](.*)', ddr1))
@@ -258,6 +258,7 @@ def main():
     updater.start_polling()
     updater.idle()
 
+    # TODO: add send msg to admin on start
 
 if __name__ == '__main__':
     main()
