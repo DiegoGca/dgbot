@@ -19,6 +19,7 @@ from credentials import LIST_OF_ADMINS, TOKEN
 
 import telegramcalendar
 import aulas
+import teleaula
 
 updater = None
 
@@ -144,6 +145,8 @@ def aula(bot, update):
     # TODO: /libres: muestra las aulas LIBRES de un dia, ordenada por más horas
     # o las aulas libres en las siguientes horas
     print("aula")
+    update.message.reply_text("HORAS DE AULAS: ",
+    reply_markup=teleaula.create_table())
 
 
 @send_action(ChatAction.UPLOAD_PHOTO)
@@ -259,6 +262,7 @@ def main():
     updater.idle()
 
     # TODO: add send msg to admin on start
+
 
 if __name__ == '__main__':
     main()

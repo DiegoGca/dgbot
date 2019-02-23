@@ -17,10 +17,52 @@ def week_of_month(dt):
     return int(ceil(adjusted_dom/7.0))
 
 
+def get_aula():
+    url = "http://campus.usal.es/~aulas/php/infPLibres.php?pre=fc"
+
+    req = requests.get(url)
+
+    try:
+        assert req.status_code == 200
+
+        # Pasamos el contenido HTML de la web a un objeto BeautifulSoup()
+        html = BeautifulSoup(req.text, "html.parser")
+
+        tabla = html.find_all('table', {'valign': 'MIDDLE'})
+        tabladias = tabla[0].find_all('tr')
+
+        dias = []
+        for td in tabladias:
+            algo = td.find_all('table')
+            if algo:
+                dias.append(algo)
+
+        result = []
+        for d in dias:
+            for aul in d:
+                if aul == d[8]:
+                    break  # eliminar aulas 7 y 8
+                horas = aul.find_all('td')
+                disp = []
+                for h in horas:
+                    # <--
+                    # TODO eliminar horas (10x8)
+                    disp.append(h.text.replace('\xa0', ' '))
+                result.append(disp)
+            break  # solo el primer dia! TODO select dia
+
+        print(result)
+        return result
+
+    except AssertionError:
+        print("ERROR: http response code: "+str(req.status_code))
+
+
 def print_dia(url, datea):
     # TODO add other classrooms
     # + rename (only labs)
     # http://campus.usal.es/~aulas/aulas/fc/fc_pli.htm now working
+    # http://campus.usal.es/~aulas/php/infPLibres.php?pre=fc
     """Returns string timetable lab(url) """
 
     # print(datea)
@@ -108,3 +150,7 @@ def pretty_lab(lab):
         prett += "\n"
 
     return prett
+
+
+if __name__ == '__main__':
+    get_aula()
