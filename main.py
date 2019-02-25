@@ -1,7 +1,7 @@
 #!/usr/bin/python3.6
 
 import re
-# import os
+import os
 # import sys
 import logging
 import threading
@@ -15,11 +15,19 @@ from telegram import ReplyKeyboardRemove
 from telegram import ChatAction
 from functools import wraps
 
-from credentials import LIST_OF_ADMINS, TOKEN
+# from credentials import LIST_OF_ADMINS, TOKEN
+try:
+    from credentials import LIST_OF_ADMINS, TOKEN
+except ImportError:
+    import warnings
+    warnings.warn('local_settings failed to import', ImportWarning)
 
 import telegramcalendar
 import aulas
 import teleaula
+
+LIST_OF_ADMINS = os.getenv('LIST_OF_ADMINS')
+TOKEN = os.getenv('TOKEN')
 
 updater = None
 
@@ -109,7 +117,7 @@ def handl_text(bot, update):
     # update.message.reply_text("Texto generico")
 
 
-def dg(bot, update):  # TODO fix this
+def dg(bot, update):
     """ BUG: sending these imgs crashes the bot
         TODO: fix
     """
@@ -261,6 +269,7 @@ def main():
     updater.start_polling()
     updater.idle()
 
+    # TODO: https://github.com/python-telegram-bot/python-telegram-bot/wiki/Code-snippets#simple-way-of-restarting-the-bot
     # TODO: add send msg to admin on start
 
 
