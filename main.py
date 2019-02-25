@@ -239,6 +239,8 @@ def shutdown():
 # main
 def main():
     global updater
+    print("main token: ")
+    print(TOKEN)
     updater = Updater(TOKEN)
     dp = updater.dispatcher
 
