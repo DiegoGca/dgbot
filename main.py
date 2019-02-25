@@ -19,15 +19,12 @@ from functools import wraps
 try:
     from credentials import LIST_OF_ADMINS, TOKEN
 except ImportError:
-    import warnings
-    warnings.warn('local_settings failed to import', ImportWarning)
+    LIST_OF_ADMINS = os.getenv('LIST_OF_ADMINS')
+    TOKEN = os.getenv('TOKEN')
 
 import telegramcalendar
 import aulas
 import teleaula
-
-LIST_OF_ADMINS = os.getenv('LIST_OF_ADMINS')
-TOKEN = os.getenv('TOKEN')
 
 updater = None
 
