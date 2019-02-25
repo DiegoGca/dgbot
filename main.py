@@ -21,6 +21,8 @@ try:
 except ImportError:
     LIST_OF_ADMINS = os.getenv('LIST_OF_ADMINS')
     TOKEN = os.getenv('TOKEN')
+    print("El token: ")
+    print(TOKEN)
 
 import telegramcalendar
 import aulas
