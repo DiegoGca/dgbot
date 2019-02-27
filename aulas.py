@@ -31,14 +31,14 @@ def get_aula():
         tabla = html.find_all('table', {'valign': 'MIDDLE'})
         tabladias = tabla[0].find_all('tr')
 
-        dias = []
+        dias = []  # TODO refactor
         for td in tabladias:
             algo = td.find_all('table')
             if algo:
                 dias.append(algo)
 
         result = []
-        for d in dias:
+        for d in dias:  # TODO select dia dias[n]
             for aul in d:
                 if aul == d[8]:
                     break  # eliminar aulas 7 y 8
@@ -47,9 +47,9 @@ def get_aula():
                 for h in horas:
                     # <--
                     # TODO eliminar horas (10x8)
-                    disp.append(h.text.replace('\xa0', ' '))
+                    disp.append(h.text.replace('\xa0', '🔴').replace('X', "✅"))
                 result.append(disp)
-            break  # solo el primer dia! TODO select dia
+            break   # solo el primer dia! TODO select dia
 
         print(result)
         return result
@@ -97,7 +97,7 @@ def print_dia(url, datea):
 
         info = ht_str.find_all('td', {'align': 'LEFT'})
 
-        horario = []
+        horario=[]
         for a in info:
             if a == info[1]:
                 continue  # salatar la fecha

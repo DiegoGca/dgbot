@@ -21,8 +21,6 @@ try:
 except ImportError:
     LIST_OF_ADMINS = os.getenv('LIST_OF_ADMINS')
     TOKEN = os.getenv('TOKEN')
-    print("El token: ")
-    print(TOKEN)
 
 import telegramcalendar
 import aulas
@@ -37,6 +35,7 @@ logging.info('Starting bot...')
 
 
 # TODO: add decorators external file
+# TODO: prepare pta v12
 # Restricted Decorator
 def restricted(func):
     """Restrict the access of a handler to only
@@ -66,7 +65,7 @@ def send_action(action):
 
     return decorator
 
-####################################
+#####################################
 
 
 # /start
@@ -239,8 +238,6 @@ def shutdown():
 # main
 def main():
     global updater
-    print("main token: ")
-    print(TOKEN)
     updater = Updater(TOKEN)
     dp = updater.dispatcher
 
