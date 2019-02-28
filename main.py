@@ -141,7 +141,9 @@ def ddr1(bot, update):
 
 @send_action(ChatAction.TYPING)
 def s27(bot, update):
-    update.message.reply_text("Veeeeintisiiete")
+    chat_id = update.message.chat_id
+    gif_27 = 'CgADBAADWIMAAtoZZAeHClhlqwXnwQI'  # file_id
+    bot.send_animation(chat_id=chat_id, animation=gif_27)
 
 
 @send_action(ChatAction.TYPING)
