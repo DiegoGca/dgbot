@@ -140,6 +140,11 @@ def ddr1(bot, update):
 
 
 @send_action(ChatAction.TYPING)
+def s27(bot, update):
+    update.message.reply_text("Veeeeintisiiete")
+
+
+@send_action(ChatAction.TYPING)
 def ping(bot, update):
     import time
     time.sleep(1)
@@ -258,6 +263,8 @@ def main():
     dp.add_handler(RegexHandler('((d|D)+)(((a|A)+)((n|N)+)((i|I))+)', acho))
     dp.add_handler(RegexHandler('(.*)(p|P)erd(i|í)(.*)', perdi))
     dp.add_handler(RegexHandler('(.*)(d|D)(d|D)(r|R)[0-9](.*)', ddr1))
+    dp.add_handler(RegexHandler('([0-9]*)|(\s)27(.*)', s27))
+
 
     # on noncommand i.e message - echo the message on Telegram
     dp.add_handler(MessageHandler(Filters.text, handl_text))
