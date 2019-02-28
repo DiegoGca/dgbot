@@ -147,6 +147,13 @@ def s27(bot, update):
 
 
 @send_action(ChatAction.TYPING)
+def rajao(bot, update):
+    chat_id = update.message.chat_id
+    gif_raja = 'CgADBAADAgMAAq5J-VMZu-JjpRD2qgI'  # file_id
+    bot.send_animation(chat_id=chat_id, animation=gif_raja)
+
+
+@send_action(ChatAction.TYPING)
 def ping(bot, update):
     import time
     time.sleep(1)
@@ -262,10 +269,13 @@ def main():
     dp.add_handler(CommandHandler('horario', horario))
     dp.add_handler(CommandHandler('mihorario', mihorario))
 
+    # TODO: re.Ignorecase regex clarity
     dp.add_handler(RegexHandler('((d|D)+)(((a|A)+)((n|N)+)((i|I))+)', acho))
     dp.add_handler(RegexHandler('(.*)(p|P)erd(i|í)(.*)', perdi))
     dp.add_handler(RegexHandler('(.*)(d|D)(d|D)(r|R)[0-9](.*)', ddr1))
-    dp.add_handler(RegexHandler('([0-9]*)|(\s)27(.*)', s27))
+    dp.add_handler(RegexHandler('(.*)27(.*)', s27))
+    p = re.compile('(.*)rajao(.*)', re.IGNORECASE)
+    dp.add_handler(RegexHandler(p, rajao))
 
 
     # on noncommand i.e message - echo the message on Telegram
