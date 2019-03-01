@@ -298,8 +298,8 @@ def main():
         msg = "==============\n"
         msg += " STARTING BOT \n"
         msg += "=============="
-        updater.bot.send_message(chat_id=chat_id, text=msg)
         print(LIST_OF_ADMINS)
+        updater.bot.send_message(chat_id=chat_id, text=msg)
 
     updater.start_polling()
     updater.idle()
