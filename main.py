@@ -256,24 +256,30 @@ def main():
     dp = updater.dispatcher
 
     dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler(["calendar", "calendario"], calendar_handler))
-    dp.add_handler(CallbackQueryHandler(inline_handler))
-
+    dp.add_handler(CommandHandler('echo', echo))
     dp.add_handler(CommandHandler(['dog', 'jj', 'juanju'], dog_pict))
     dp.add_handler(CommandHandler(['cat', 'gatoperro'], cat_pict))
-    dp.add_handler(CommandHandler('echo', echo))
     dp.add_handler(CommandHandler('stop', stop))
     dp.add_handler(CommandHandler('dg8',  dg))
     dp.add_handler(CommandHandler('ping', ping))
-    dp.add_handler(CommandHandler('aula', aula))
     dp.add_handler(CommandHandler('horario', horario))
     dp.add_handler(CommandHandler('mihorario', mihorario))
+    dp.add_handler(CommandHandler('aula', aula))
+    dp.add_handler(CommandHandler(["calendar", "calendario"], calendar_handler))
+    dp.add_handler(CallbackQueryHandler(inline_handler))
 
-    # TODO: re.Ignorecase regex clarity
-    dp.add_handler(RegexHandler('((d|D)+)(((a|A)+)((n|N)+)((i|I))+)', acho))
-    dp.add_handler(RegexHandler('(.*)(p|P)erd(i|í)(.*)', perdi))
-    dp.add_handler(RegexHandler('(.*)(d|D)(d|D)(r|R)[0-9](.*)', ddr1))
+    # Regex:
+    p = re.compile('d+a+n+i+', re.IGNORECASE)
+    dp.add_handler(RegexHandler(p, acho))
+
+    p = re.compile('(.*)pe+rd(i|í)(.*)', re.IGNORECASE)
+    dp.add_handler(RegexHandler(p, perdi))
+
+    p = re.compile('(.*)ddr[0-9](.*)', re.IGNORECASE)
+    dp.add_handler(RegexHandler(p, ddr1))
+
     dp.add_handler(RegexHandler('(.*)27(.*)', s27))
+
     p = re.compile('(.*)rajao(.*)', re.IGNORECASE)
     dp.add_handler(RegexHandler(p, rajao))
 
@@ -287,7 +293,8 @@ def main():
     updater.idle()
 
     # TODO: https://github.com/python-telegram-bot/python-telegram-bot/wiki/Code-snippets#simple-way-of-restarting-the-bot
-    # TODO: add send msg to admin on start
+
+    
 
 
 if __name__ == '__main__':
