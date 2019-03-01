@@ -294,11 +294,12 @@ def main():
     # TODO: https://github.com/python-telegram-bot/python-telegram-bot/wiki/Code-snippets#simple-way-of-restarting-the-bot
 
     # send msg to admin on start
+    print(LIST_OF_ADMINS)
     for chat_id in LIST_OF_ADMINS:
         msg = "==============\n"
         msg += " STARTING BOT \n"
         msg += "=============="
-        print(LIST_OF_ADMINS)
+        print(chat_id)
         updater.bot.send_message(chat_id=chat_id, text=msg)
 
     updater.start_polling()
