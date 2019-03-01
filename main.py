@@ -19,8 +19,15 @@ from functools import wraps
 try:
     from credentials import LIST_OF_ADMINS, TOKEN
 except ImportError:
-    LIST_OF_ADMINS = os.getenv('LIST_OF_ADMINS')
     TOKEN = os.getenv('TOKEN')
+    # parse environment variable to list:
+    strlist = os.getenv('LIST_OF_ADMINS')
+
+    LIST_OF_ADMINS = []
+    strlist = strlist.strip('[]')
+    strlist = map(str.strip, strlist.split(','))
+    for item in strlist:
+        LIST_OF_ADMINS.append(item)
 
 import telegramcalendar
 import aulas
