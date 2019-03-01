@@ -101,9 +101,10 @@ def cat_pict(bot, update):
 
 
 @send_action(ChatAction.TYPING)
-def echo(bot, update):
+def echo(bot, update, args):
     """Echo the user message."""
-    update.message.reply_text(update.message.text)
+    text = ' '.join(args)
+    update.message.reply_text(text)
     # shortcut to bot.send_message with sane defaults
     # chat_id = update.message.chat_id
     # bot.send_message(chat_id=chat_id, text=update.message.text)
@@ -255,7 +256,7 @@ def main():
     dp = updater.dispatcher
 
     dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler('echo', echo))
+    dp.add_handler(CommandHandler('echo', echo, pass_args=True))
     dp.add_handler(CommandHandler(['dog', 'jj', 'juanju'], dog_pict))
     dp.add_handler(CommandHandler(['cat', 'gatoperro'], cat_pict))
     dp.add_handler(CommandHandler('stop', stop))
@@ -282,9 +283,8 @@ def main():
     p = re.compile('(.*)rajao(.*)', re.IGNORECASE)
     dp.add_handler(RegexHandler(p, rajao))
 
-
     # on noncommand i.e message - echo the message on Telegram
-    dp.add_handler(MessageHandler(Filters.text, handl_text))
+    # dp.add_handler(MessageHandler(Filters.text, handl_text))
 
     # log all errors
     dp.add_error_handler(error)
