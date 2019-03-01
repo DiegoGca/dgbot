@@ -121,6 +121,9 @@ def dg(bot, update):
         TODO: fix
     """
     chat_id = update.message.chat_id
+    logging.info('dg: sending imgs')
+    bot.send_photo(chat_id=chat_id, photo='https://random.dog/8f04ddb3-2b72-4bd1-8c02-c5ab49ac7292.jpg')
+    logging.info('---error:')
     bot.send_photo(chat_id=chat_id, photo='https://random.dog/59f02432-b972-4428-935b-4efb0af83456.jpg')
     bot.send_animation(chat_id=chat_id, animation='https://random.dog/3254832e-ace1-414c-9d66-e4d968f2928f.gif')
 
@@ -165,7 +168,6 @@ def ping(bot, update):
 def aula(bot, update):
     # TODO: /libres: muestra las aulas LIBRES de un dia, ordenada por más horas
     # o las aulas libres en las siguientes horas
-    print("aula")
     update.message.reply_text("HORAS DE AULAS: ",
     reply_markup=teleaula.create_table())
 
@@ -297,6 +299,7 @@ def main():
         msg += " STARTING BOT \n"
         msg += "=============="
         updater.bot.send_message(chat_id=chat_id, text=msg)
+        print(LIST_OF_ADMINS)
 
     updater.start_polling()
     updater.idle()
