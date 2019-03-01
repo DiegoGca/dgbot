@@ -283,6 +283,7 @@ def main():
     p = re.compile('(.*)rajao(.*)', re.IGNORECASE)
     dp.add_handler(RegexHandler(p, rajao))
 
+
     # on noncommand i.e message - echo the message on Telegram
     dp.add_handler(MessageHandler(Filters.text, handl_text))
 
@@ -300,7 +301,6 @@ def main():
 
     updater.start_polling()
     updater.idle()
-
 
 
 if __name__ == '__main__':
