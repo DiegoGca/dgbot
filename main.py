@@ -35,7 +35,7 @@ logging.info('Starting bot...')
 
 
 # TODO: add decorators external file
-# TODO: prepare pta v12
+# TODO: prepare telegram api wrapper v12
 # Restricted Decorator
 def restricted(func):
     """Restrict the access of a handler to only
@@ -186,7 +186,7 @@ def mihorario(bot, update):
 
 
 def calendar_handler(bot, update):
-    update.message.reply_text("Please select a date: ",
+    update.message.reply_text("Selecciona una fecha: ",
     reply_markup=telegramcalendar.create_calendar())
 
 
@@ -194,8 +194,7 @@ def inline_handler(bot, update):
     selected, date = telegramcalendar.process_calendar_selection(bot, update)
     if selected:
         msg = aulas.get_labs_sch(date)
-        bot.send_message(chat_id=update.callback_query.from_user.id,
-                        # text="You selected %s" % (date.strftime("%d/%m/%Y")),
+        bot.send_message(chat_id=update.callback_query.message.chat.id,
                         text=msg,
                         parse_mode='HTML',
                         reply_markup=ReplyKeyboardRemove())
