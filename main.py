@@ -283,18 +283,24 @@ def main():
     p = re.compile('(.*)rajao(.*)', re.IGNORECASE)
     dp.add_handler(RegexHandler(p, rajao))
 
-
     # on noncommand i.e message - echo the message on Telegram
     dp.add_handler(MessageHandler(Filters.text, handl_text))
 
     # log all errors
     dp.add_error_handler(error)
-    updater.start_polling()
-    updater.idle()
 
     # TODO: https://github.com/python-telegram-bot/python-telegram-bot/wiki/Code-snippets#simple-way-of-restarting-the-bot
 
-    
+    # send msg to admin on start
+    for chat_id in LIST_OF_ADMINS:
+        msg = "==============\n"
+        msg += " STARTING BOT \n"
+        msg += "=============="
+        updater.bot.send_message(chat_id=chat_id, text=msg)
+
+    updater.start_polling()
+    updater.idle()
+
 
 
 if __name__ == '__main__':
