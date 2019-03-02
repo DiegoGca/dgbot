@@ -59,8 +59,7 @@ def get_aula():
 
 
 def print_dia(url, datea):
-    # TODO add other classrooms
-    # + rename (only labs)
+    # TODO rename (only labs)
     # http://campus.usal.es/~aulas/aulas/fc/fc_pli.htm now working
     # http://campus.usal.es/~aulas/php/infPLibres.php?pre=fc
     """Returns string timetable lab(url) """

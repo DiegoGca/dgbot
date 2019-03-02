@@ -175,6 +175,7 @@ def ping(bot, update):
 def aula(bot, update):
     # TODO: /libres: muestra las aulas LIBRES de un dia, ordenada por más horas
     # o las aulas libres en las siguientes horas
+    # TODO aceptar parametro de seleccion de dia
     update.message.reply_text("HORAS DE AULAS: ",
     reply_markup=teleaula.create_table())
 
