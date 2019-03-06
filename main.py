@@ -1,4 +1,4 @@
-#!/usr/bin/python3.6
+#!/usr/bin/env python3
 
 import re
 import os
@@ -105,6 +105,14 @@ def cat_pict(bot, update):
         bot.send_animation(chat_id=chat_id, animation=url)
     else:
         bot.send_photo(chat_id=chat_id, photo=url)
+
+
+@send_action(ChatAction.TYPING)
+def weather(bot, update):
+    """Send weather"""
+    url = 'http://wttr.in/salamanca?m&format=3' # TODO otros formatos
+    resp = requests.get(url)
+    update.message.reply_text(resp.text)
 
 
 @send_action(ChatAction.TYPING)
@@ -272,6 +280,7 @@ def main():
     dp.add_handler(CommandHandler('stop', stop))
     dp.add_handler(CommandHandler('dg8',  dg))
     dp.add_handler(CommandHandler('ping', ping))
+    dp.add_handler(CommandHandler('weather', weather))
     dp.add_handler(CommandHandler('horario', horario))
     dp.add_handler(CommandHandler('mihorario', mihorario))
     dp.add_handler(CommandHandler('aula', aula))
