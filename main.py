@@ -110,7 +110,13 @@ def cat_pict(bot, update):
 @send_action(ChatAction.TYPING)
 def weather(bot, update):
     """Send weather"""
-    url = 'http://wttr.in/salamanca?m&format=3' # TODO otros formatos
+    url = 'http://wttr.in/salamanca?FT_m_0_q&lang=es&format=3' # TODO otros formatos
+    # T quitar colores
+    # F quitar follow
+    # m sistema metrico
+    # 0 dia actual
+    # format 3 ciudad: temp
+
     resp = requests.get(url)
     update.message.reply_text(resp.text)
 
