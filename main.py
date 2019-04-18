@@ -120,6 +120,11 @@ def weather(bot, update):
     resp = requests.get(url)
     update.message.reply_text(resp.text)
 
+    # OPcion imagen:
+    #chat_id = update.message.chat_id
+    #url='http://wttr.in/salamanca.png'
+    #bot.send_photo(chat_id=chat_id, photo=url)
+
 
 @send_action(ChatAction.TYPING)
 def echo(bot, update, args):
@@ -139,7 +144,9 @@ def handl_text(bot, update):
 
 def dg(bot, update):
     """ BUG: sending these imgs crashes the bot
-        TODO: fix
+        Reason:  5 MB max size for photos and 20 MB max for other types of content.
+                https://core.telegram.org/bots/api#sending-files
+        TODO: fix -  check size before sending
     """
     chat_id = update.message.chat_id
     logging.info('dg: sending imgs')
@@ -240,7 +247,7 @@ def stop(bot, update):
 
 def error(bot, update, error):
     """Log Errors caused by Updates."""
-    logging.warning('Update "%s" caused error "%s"', update, error)
+    #logging.warning('Update "%s" caused error "%s"', update, error)
 
 
 def get_url():
@@ -312,17 +319,17 @@ def main():
     # dp.add_handler(MessageHandler(Filters.text, handl_text))
 
     # log all errors
-    dp.add_error_handler(error)
+    # dp.add_error_handler(error)
 
     # TODO: https://github.com/python-telegram-bot/python-telegram-bot/wiki/Code-snippets#simple-way-of-restarting-the-bot
 
     # send msg to admin on start
-    print(LIST_OF_ADMINS)
+    #print(LIST_OF_ADMINS)
     for chat_id in LIST_OF_ADMINS:
         msg = "==============\n"
         msg += " STARTING BOT \n"
         msg += "=============="
-        print(chat_id)
+        #print(chat_id)
         updater.bot.send_message(chat_id=chat_id, text=msg)
 
     updater.start_polling()
