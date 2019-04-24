@@ -122,6 +122,18 @@ def weather(bot, update):
 
     update.message.reply_text(text, parse_mode='HTML')
 
+@send_action(ChatAction.TYPING)
+def expandurl(bot, update, args):
+    """Echo the user message."""
+    url = " ".join(args)
+    longurl = requests.get(url, allow_redirects=False).headers['Location']
+    # comprobar si tiene url(www.algo.es/algo)
+    try:
+        longurl = re.search('(?<=url\().*?(?=\))', longurl).group(0)
+    except AttributeError as e:
+        pass
+
+    update.message.reply_text(longurl)
 
 
 @send_action(ChatAction.TYPING)
@@ -295,6 +307,7 @@ def main():
     dp.add_handler(CommandHandler('horario', horario))
     dp.add_handler(CommandHandler('mihorario', mihorario))
     dp.add_handler(CommandHandler('aula', aula))
+    dp.add_handler(CommandHandler('expandurl', expandurl, pass_args=True))
     dp.add_handler(CommandHandler(["calendar", "calendario"], calendar_handler))
     dp.add_handler(CallbackQueryHandler(inline_handler))
 
