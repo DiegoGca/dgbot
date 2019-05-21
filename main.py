@@ -2,7 +2,7 @@
 
 import re
 import os
-# import sys
+import sys
 import logging
 import threading
 import requests
@@ -16,10 +16,14 @@ from telegram import ChatAction
 from functools import wraps
 
 # from credentials import LIST_OF_ADMINS, TOKEN
+updater = None
+mode = None
 try:
-    from credentials import LIST_OF_ADMINS, TOKEN
-except ImportError:
+    from credentials import LIST_OF_ADMINS, TOKEN, MODE
+    mode = MODE
+except (ImportError, ModuleNotFoundError):
     TOKEN = os.getenv('TOKEN')
+    mode = os.getenv('MODE', 'dev')
     # parse environment variable to list:
     strlist = os.getenv('LIST_OF_ADMINS')
 
@@ -33,12 +37,30 @@ import telegramcalendar
 import aulas
 import teleaula
 
-updater = None
+
+
+if mode == "dev":
+    def run(updater):
+        updater.start_polling()
+        logging.info('Starting bot...%s', mode)
+elif mode == "prod":
+    def run(updater):
+        PORT = int(os.environ.get("PORT", "8443"))
+        HEROKU_APP_NAME = os.environ.get("HEROKU_APP_NAME")
+        # Code from https://github.com/python-telegram-bot/python-telegram-bot/wiki/Webhooks#heroku
+        updater.start_webhook(listen="0.0.0.0",
+                              port=PORT,
+                              url_path=TOKEN)
+        updater.bot.set_webhook("https://{}.herokuapp.com/{}".format(HEROKU_APP_NAME, TOKEN))
+        logging.info('Starting bot...%s', mode)
+else:
+    logging.error("No MODE specified!")
+    sys.exit(1)
+
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     filename='dgbot.log',
                     level=logging.DEBUG)
-logging.info('Starting bot...')
 
 
 # TODO: add decorators external file
@@ -343,8 +365,9 @@ def main():
         #print(chat_id)
         updater.bot.send_message(chat_id=chat_id, text=msg)
 
-    updater.start_polling()
-    updater.idle()
+    run(updater)
+    #updater.start_polling()
+    #updater.idle()
 
 
 if __name__ == '__main__':
